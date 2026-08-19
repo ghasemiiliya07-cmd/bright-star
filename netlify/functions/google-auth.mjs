@@ -2,6 +2,9 @@ export const handler = async (event) => {
   const clientId = process.env.GOOGLE_CLIENT_ID;
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
 
+  console.log("Google Client ID exists:", Boolean(clientId));
+  console.log("Google Client Secret exists:", Boolean(clientSecret));
+
   if (!clientId || !clientSecret) {
     return {
       statusCode: 500,
@@ -12,8 +15,11 @@ export const handler = async (event) => {
   const siteUrl = "https://brightstars.ir";
   const redirectUri = `${siteUrl}/.netlify/functions/google-auth`;
 
-  const params = new URLSearchParams(event.queryStringParameters || {});
+  const params = new URLSearchParams(
+    event.queryStringParameters || {}
+  );
 
+  // شروع ورود با Google
   if (!params.get("code")) {
     const googleUrl = new URL(
       "https://accounts.google.com/o/oauth2/v2/auth"
@@ -34,6 +40,7 @@ export const handler = async (event) => {
     };
   }
 
+  // دریافت کد از Google
   const code = params.get("code");
 
   const tokenResponse = await fetch(
@@ -56,12 +63,15 @@ export const handler = async (event) => {
   const tokenData = await tokenResponse.json();
 
   if (!tokenResponse.ok || !tokenData.access_token) {
+    console.error("Google token error:", tokenData);
+
     return {
       statusCode: 401,
       body: "Google login failed."
     };
   }
 
+  // دریافت اطلاعات کاربر
   const userResponse = await fetch(
     "https://openidconnect.googleapis.com/v1/userinfo",
     {
@@ -80,6 +90,9 @@ export const handler = async (event) => {
     };
   }
 
+  console.log("Google login successful:", user.email);
+
+  // برگشت به صفحه حساب
   const accountUrl = new URL(
     "/account.html",
     siteUrl
