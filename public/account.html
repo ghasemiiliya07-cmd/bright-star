@@ -1,613 +1,1729 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>برایِت استار | خرید استارز تلگرام</title>
 
-  <title>حساب کاربری | Bright Star</title>
+<style>
+:root{
+  --p:#8b5cf6;
+  --p2:#6d28d9;
+  --ink:#f5f1ff;
+  --muted:#aaa3bb;
+  --line:rgba(255,255,255,.1);
+  --green:#18c978;
+  --bg:#07070c;
+}
 
-  <meta
-    name="description"
-    content="حساب کاربری برایت استار"
-  >
+*{box-sizing:border-box}
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+html{
+  scroll-behavior:smooth;
+}
 
-    body {
-      font-family: Tahoma, Arial, sans-serif;
-      background:
-        radial-gradient(circle at top right, rgba(35, 150, 255, 0.18), transparent 35%),
-        radial-gradient(circle at bottom left, rgba(0, 91, 255, 0.12), transparent 35%),
-        #07111f;
-      color: #fff;
-      min-height: 100vh;
-    }
+body{
+  margin:0;
+  font-family:Tahoma,Arial,sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 15% 10%,rgba(124,58,237,.2),transparent 30%),
+    radial-gradient(circle at 85% 20%,rgba(99,102,241,.15),transparent 28%),
+    #07070c;
+}
 
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
+a{
+  text-decoration:none;
+}
 
-    button {
-      font-family: inherit;
-    }
+button,input,select{
+  font-family:inherit;
+}
 
-    .container {
-      width: min(1100px, calc(100% - 32px));
-      margin: auto;
-    }
+.container{
+  width:min(1160px,92%);
+  margin:auto;
+}
 
-    /* Header */
+/* HEADER */
 
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(7, 17, 31, 0.82);
-      backdrop-filter: blur(18px);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
+header{
+  height:72px;
+  border-bottom:1px solid rgba(255,255,255,.09);
+  background:rgba(8,8,13,.72);
+  position:sticky;
+  top:0;
+  z-index:50;
+  backdrop-filter:blur(22px);
+}
 
-    .nav {
-      min-height: 74px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-    }
+.nav{
+  height:100%;
+  display:flex;
+  align-items:center;
+  gap:22px;
+}
 
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 22px;
-      font-weight: 900;
-    }
+.logo{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-weight:900;
+  font-size:20px;
+  color:#f5f1ff;
+  white-space:nowrap;
+}
 
-    .logo-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 14px;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg, #2196f3, #0066ff);
-      box-shadow: 0 10px 30px rgba(0, 119, 255, 0.25);
-    }
+.logoIcon{
+  width:36px;
+  height:36px;
+  border-radius:11px;
+  background:linear-gradient(135deg,#8b5cf6,#6d28d9);
+  color:#fff;
+  display:grid;
+  place-items:center;
+}
 
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 22px;
-      color: #c8d5e6;
-      font-size: 14px;
-    }
+.logo span{
+  color:#a78bfa;
+}
 
-    .nav-links a:hover {
-      color: #fff;
-    }
+nav{
+  display:flex;
+  gap:18px;
+  flex:1;
+}
 
-    .buy-btn {
-      padding: 12px 18px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #2196f3, #0066ff);
-      font-weight: 800;
-    }
+nav a{
+  font-size:11px;
+  font-weight:700;
+  color:#c9c3d4;
+}
 
-    /* Main */
+.account{
+  padding:10px 15px;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:9px;
+  color:#ddd7e8;
+  font-size:11px;
+  background:rgba(255,255,255,.04);
+  cursor:pointer;
+}
 
-    main {
-      padding: 60px 0 90px;
-    }
+.cta,
+.primary{
+  background:linear-gradient(135deg,#8b5cf6,#6d28d9);
+  color:#fff;
+  padding:11px 17px;
+  border-radius:9px;
+  font-size:11px;
+  font-weight:bold;
+}
 
-    .page-title {
-      text-align: center;
-      margin-bottom: 35px;
-    }
+.menu{
+  display:none;
+  border:0;
+  background:none;
+  color:#fff;
+  font-size:24px;
+}
 
-    .page-title h1 {
-      font-size: clamp(28px, 5vw, 42px);
-      margin-bottom: 10px;
-    }
+/* HERO */
 
-    .page-title p {
-      color: #9fb0c5;
-      line-height: 1.9;
-    }
+.hero{
+  background:transparent;
+  padding:58px 0 42px;
+}
 
-    /* Login */
+.heroGrid{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:55px;
+  align-items:center;
+}
 
-    .login-card {
-      max-width: 520px;
-      margin: auto;
-      padding: 35px;
-      background: rgba(255,255,255,0.055);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 24px;
-      backdrop-filter: blur(20px);
-      box-shadow: 0 25px 70px rgba(0,0,0,0.25);
-    }
+.heroText{
+  text-align:right;
+}
 
-    .google-btn {
-      width: 100%;
-      min-height: 56px;
-      border: 0;
-      border-radius: 15px;
-      background: #fff;
-      color: #18212f;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      transition: transform .2s, box-shadow .2s;
-    }
+.verified{
+  color:#c4b5fd;
+  background:rgba(139,92,246,.13);
+  display:inline-block;
+  padding:7px 12px;
+  border-radius:30px;
+  font-size:10px;
+  font-weight:bold;
+}
 
-    .google-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.2);
-    }
+.hero h1{
+  font-size:43px;
+  line-height:1.5;
+  margin:14px 0 9px;
+}
 
-    .google-icon {
-      width: 22px;
-      height: 22px;
-      display: block;
-    }
+.hero h1 span{
+  color:#a78bfa;
+}
 
-    .error {
-      display: none;
-      margin-top: 18px;
-      padding: 13px;
-      border-radius: 12px;
-      background: rgba(255, 70, 70, 0.12);
-      border: 1px solid rgba(255, 70, 70, 0.25);
-      color: #ff9b9b;
-      line-height: 1.8;
-      font-size: 14px;
-    }
+.hero p{
+  font-size:13px;
+  color:#aaa3bb;
+  line-height:2.1;
+  max-width:620px;
+}
 
-    /* Account */
+.actions{
+  display:flex;
+  gap:9px;
+  margin-top:18px;
+}
 
-    .account {
-      display: none;
-    }
+.primary,
+.secondary{
+  padding:12px 20px;
+  border-radius:9px;
+  font-size:12px;
+  font-weight:bold;
+}
 
-    .profile-card {
-      max-width: 850px;
-      margin: auto;
-      padding: 30px;
-      background: rgba(255,255,255,0.055);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 24px;
-      backdrop-filter: blur(20px);
-    }
+.secondary{
+  border:1px solid rgba(255,255,255,.1);
+  color:#ddd7e8;
+  background:rgba(255,255,255,.04);
+}
 
-    .profile {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      padding-bottom: 25px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      margin-bottom: 25px;
-    }
+.heroArt{
+  height:330px;
+  border-radius:26px;
+  background:radial-gradient(circle,#31245e,#171128 50%,#08070d);
+  display:grid;
+  place-items:center;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 25px 60px rgba(79,70,229,.16);
+  border:1px solid rgba(255,255,255,.1);
+}
 
-    .avatar {
-      width: 76px;
-      height: 76px;
-      border-radius: 50%;
-      object-fit: cover;
-      background: #15263b;
-      border: 3px solid rgba(33,150,243,0.5);
-    }
+.orb{
+  width:245px;
+  height:245px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.18);
+  display:grid;
+  place-items:center;
+}
 
-    .profile-info h2 {
-      font-size: 22px;
-      margin-bottom: 8px;
-    }
+.star{
+  font-size:112px;
+  color:#ffd45a;
+  z-index:2;
+  text-shadow:0 10px 25px #0005;
+}
 
-    .profile-info p {
-      color: #9fb0c5;
-      direction: ltr;
-      text-align: right;
-    }
+.artText{
+  position:absolute;
+  bottom:22px;
+  color:#fff;
+  font-size:9px;
+  letter-spacing:3px;
+}
 
-    .section-title {
-      font-size: 20px;
-      margin-bottom: 18px;
-    }
+/* QUICK BUY */
 
-    .orders-empty {
-      padding: 30px;
-      text-align: center;
-      border-radius: 16px;
-      background: rgba(255,255,255,0.035);
-      color: #9fb0c5;
-      line-height: 2;
-    }
+.instant{
+  padding:0 0 48px;
+}
 
-    .logout {
-      margin-top: 25px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: transparent;
-      color: #fff;
-      padding: 12px 18px;
-      border-radius: 12px;
-      cursor: pointer;
-    }
+.instantBox{
+  background:rgba(20,18,29,.62);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:15px;
+  box-shadow:0 18px 55px rgba(0,0,0,.25),inset 0 1px rgba(255,255,255,.05);
+  padding:20px;
+  backdrop-filter:blur(18px);
+}
 
-    .logout:hover {
-      background: rgba(255,255,255,0.06);
-    }
+.instantTitle{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px;
+}
 
-    /* Footer */
+.instantTitle h2{
+  font-size:17px;
+  margin:0;
+}
 
-    footer {
-      border-top: 1px solid rgba(255,255,255,0.08);
-      padding: 25px 0;
-      text-align: center;
-      color: #71839a;
-      font-size: 13px;
-    }
+.instantTitle b{
+  color:var(--green);
+  font-size:10px;
+}
 
-    @media (max-width: 750px) {
-      .nav-links {
-        display: none;
-      }
+.instantRow{
+  display:grid;
+  grid-template-columns:1fr 1fr auto;
+  gap:10px;
+}
 
-      .nav {
-        min-height: 65px;
-      }
+.field,
+select{
+  border:1px solid rgba(255,255,255,.11);
+  border-radius:9px;
+  background:rgba(255,255,255,.045);
+  color:#fff;
+  padding:12px;
+  font-size:11px;
+}
 
-      main {
-        padding-top: 40px;
-      }
+select option{
+  background:#17131f;
+  color:#fff;
+}
 
-      .login-card,
-      .profile-card {
-        padding: 23px;
-      }
+.instantBtn{
+  border:0;
+  background:#f4f1ff;
+  color:#15111e;
+  border-radius:9px;
+  padding:0 23px;
+  font-weight:bold;
+  cursor:pointer;
+}
 
-      .profile {
-        align-items: flex-start;
-      }
-    }
-  </style>
+/* SECTIONS */
+
+.section{
+  padding:54px 0;
+}
+
+.gray{
+  background:rgba(255,255,255,.02);
+}
+
+.heading{
+  text-align:center;
+  margin-bottom:27px;
+}
+
+.heading small{
+  color:#a78bfa;
+  font-size:10px;
+  font-weight:bold;
+}
+
+.heading h2{
+  font-size:26px;
+  margin:8px 0;
+  color:#f5f1ff;
+}
+
+.heading p{
+  font-size:12px;
+  color:#aaa3bb;
+}
+
+/* CARDS */
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+
+.card{
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:14px;
+  background:rgba(20,18,29,.62);
+  padding:18px;
+  position:relative;
+  transition:.2s;
+  box-shadow:0 18px 55px rgba(0,0,0,.25),inset 0 1px rgba(255,255,255,.05);
+  backdrop-filter:blur(18px);
+}
+
+.card:hover{
+  transform:translateY(-4px);
+  border-color:#8b5cf6;
+}
+
+.badge{
+  position:absolute;
+  right:12px;
+  top:-9px;
+  background:#8b5cf6;
+  color:#fff;
+  border-radius:15px;
+  padding:5px 9px;
+  font-size:8px;
+}
+
+.starIcon{
+  font-size:28px;
+  color:#ffd04d;
+}
+
+.card h3{
+  font-size:15px;
+  margin:7px 0;
+}
+
+.card .desc{
+  font-size:10px;
+  color:#aaa3bb;
+}
+
+.price{
+  font-size:16px;
+  font-weight:900;
+  margin:13px 0;
+}
+
+.buy{
+  width:100%;
+  border:0;
+  background:linear-gradient(135deg,#8b5cf6,#6d28d9);
+  color:#fff;
+  padding:10px;
+  border-radius:8px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+/* TABLE */
+
+.tableWrap{
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:14px;
+  overflow:auto;
+  background:rgba(20,18,29,.62);
+  backdrop-filter:blur(18px);
+}
+
+.table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:650px;
+}
+
+.table th,
+.table td{
+  padding:13px;
+  text-align:right;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  font-size:11px;
+}
+
+.table th{
+  background:rgba(255,255,255,.035);
+  color:#aaa3bb;
+}
+
+.table button{
+  border:0;
+  background:#8b5cf6;
+  color:#fff;
+  border-radius:7px;
+  padding:7px 12px;
+  font-size:10px;
+  cursor:pointer;
+}
+
+/* FEATURES */
+
+.grid4{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+
+.feature{
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:14px;
+  padding:21px;
+  background:rgba(20,18,29,.62);
+  backdrop-filter:blur(18px);
+}
+
+.feature .ico{
+  font-size:25px;
+}
+
+.feature b{
+  display:block;
+  font-size:12px;
+  margin:9px 0 4px;
+}
+
+.feature p{
+  margin:0;
+  color:#aaa3bb;
+  font-size:10px;
+  line-height:1.9;
+}
+
+/* STEPS */
+
+.steps{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+
+.step{
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:14px;
+  padding:20px;
+  background:rgba(20,18,29,.62);
+  backdrop-filter:blur(18px);
+}
+
+.num{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  background:rgba(139,92,246,.15);
+  color:#a78bfa;
+  display:grid;
+  place-items:center;
+  font-weight:bold;
+}
+
+.step h3{
+  font-size:13px;
+}
+
+.step p{
+  font-size:10px;
+  color:#aaa3bb;
+  line-height:1.9;
+}
+
+/* REVIEWS */
+
+.reviews{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+
+.review{
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:14px;
+  padding:20px;
+  background:rgba(20,18,29,.62);
+}
+
+.review .stars{
+  color:#f4b82d;
+  letter-spacing:2px;
+}
+
+.review p{
+  font-size:11px;
+  color:#aaa3bb;
+  line-height:2;
+}
+
+.review small{
+  font-size:9px;
+  color:#9aa1ad;
+}
+
+/* FAQ */
+
+.faq{
+  max-width:820px;
+  margin:auto;
+}
+
+.faq details{
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:11px;
+  padding:14px 16px;
+  margin:8px 0;
+  background:rgba(20,18,29,.62);
+}
+
+.faq summary{
+  font-size:11px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.faq p{
+  font-size:10px;
+  color:#aaa3bb;
+  line-height:2;
+}
+
+/* SUPPORT */
+
+.support{
+  background:#100d19;
+  color:#fff;
+  padding:42px 0;
+}
+
+.supportRow{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+}
+
+.support h2{
+  margin:0 0 7px;
+  font-size:22px;
+}
+
+.support p{
+  color:#b9c0cc;
+  font-size:11px;
+}
+
+.wa{
+  background:#1fc66b;
+  color:#fff;
+  padding:12px 18px;
+  border-radius:9px;
+  font-size:11px;
+  font-weight:bold;
+}
+
+/* FOOTER */
+
+footer{
+  background:#050509;
+  color:#aeb6c4;
+  padding:32px 0;
+}
+
+.footerGrid{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:25px;
+}
+
+.footerGrid h3{
+  font-size:13px;
+  color:#fff;
+}
+
+.footerGrid a{
+  display:block;
+  color:#aeb6c4;
+  font-size:10px;
+  margin:9px 0;
+}
+
+.copy{
+  border-top:1px solid #ffffff0d;
+  margin-top:22px;
+  padding-top:16px;
+  text-align:center;
+  font-size:9px;
+}
+
+/* FLOAT */
+
+.float{
+  position:fixed;
+  left:18px;
+  bottom:18px;
+  width:53px;
+  height:53px;
+  border-radius:50%;
+  background:#1fc66b;
+  color:#fff;
+  display:grid;
+  place-items:center;
+  font-size:22px;
+  z-index:60;
+}
+
+/* MODAL */
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.75);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:100;
+  padding:15px;
+  backdrop-filter:blur(8px);
+}
+
+.modal.open{
+  display:flex;
+}
+
+.box{
+  width:min(460px,100%);
+  max-height:90vh;
+  overflow:auto;
+  background:rgba(20,18,29,.96);
+  color:#f5f1ff;
+  border:1px solid rgba(255,255,255,.11);
+  border-radius:17px;
+  padding:24px;
+  position:relative;
+  box-shadow:0 25px 80px rgba(0,0,0,.5);
+}
+
+.close{
+  position:absolute;
+  left:12px;
+  top:8px;
+  border:0;
+  background:none;
+  color:#fff;
+  font-size:25px;
+  cursor:pointer;
+}
+
+.box h2{
+  margin-top:0;
+}
+
+.box label{
+  display:block;
+  font-size:10px;
+  font-weight:bold;
+  margin:12px 0 5px;
+}
+
+.box input{
+  width:100%;
+  padding:11px;
+  border:1px solid rgba(255,255,255,.11);
+  border-radius:8px;
+  background:rgba(255,255,255,.045);
+  color:#fff;
+  outline:none;
+}
+
+.pay{
+  width:100%;
+  margin-top:15px;
+  padding:12px;
+  border:0;
+  border-radius:8px;
+  background:linear-gradient(135deg,#8b5cf6,#6d28d9);
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.pay:disabled{
+  opacity:.6;
+  cursor:wait;
+}
+
+.hint{
+  font-size:9px;
+  color:#8992a0;
+  line-height:1.8;
+}
+
+.paymentCard{
+  background:rgba(255,255,255,.045);
+  border:1px solid rgba(255,255,255,.08);
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:12px;
+}
+
+.paymentCardTitle{
+  font-size:10px;
+  color:#aaa3bb;
+  margin-bottom:7px;
+}
+
+.cardNumber{
+  font-size:18px;
+  letter-spacing:2px;
+  direction:ltr;
+  display:block;
+  text-align:center;
+  color:#fff;
+}
+
+.copyCardBtn{
+  width:100%;
+  margin-top:10px;
+  border:0;
+  padding:10px;
+  border-radius:8px;
+  background:#8b5cf6;
+  color:white;
+  font-family:inherit;
+  cursor:pointer;
+}
+
+.pending{
+  background:rgba(245,158,11,.1);
+  border:1px solid rgba(245,158,11,.2);
+  padding:13px;
+  border-radius:9px;
+  font-size:10px;
+  line-height:2;
+  color:#fbbf24;
+}
+
+.doneBtn{
+  width:100%;
+  margin-top:14px;
+  padding:11px;
+  border:0;
+  border-radius:8px;
+  background:#f4f1ff;
+  color:#15111e;
+  font-family:inherit;
+  cursor:pointer;
+}
+
+.toast{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  background:#111827;
+  color:#fff;
+  padding:11px 15px;
+  border-radius:8px;
+  opacity:0;
+  transition:.2s;
+  z-index:120;
+  font-size:10px;
+  pointer-events:none;
+}
+
+.toast.show{
+  opacity:1;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:850px){
+  nav,
+  .account{
+    display:none;
+  }
+
+  .menu{
+    display:block;
+    margin-right:auto;
+  }
+
+  .heroGrid{
+    grid-template-columns:1fr;
+  }
+
+  .heroText{
+    text-align:center;
+  }
+
+  .hero p{
+    margin:auto;
+  }
+
+  .actions{
+    justify-content:center;
+  }
+
+  .cards{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .grid4{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .steps{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .instantRow{
+    grid-template-columns:1fr;
+  }
+
+  .instantBtn{
+    height:43px;
+  }
+
+  .footerGrid{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media(max-width:500px){
+  .hero h1{
+    font-size:32px;
+  }
+
+  .cards,
+  .grid4,
+  .steps,
+  .reviews,
+  .footerGrid{
+    grid-template-columns:1fr;
+  }
+
+  .heroArt{
+    height:260px;
+  }
+
+  .nav{
+    gap:10px;
+  }
+
+  .supportRow{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <header>
-    <div class="container nav">
+<header>
+  <div class="container nav">
 
-      <a href="/" class="logo">
-        <span class="logo-icon">⭐</span>
-        <span>Bright Star</span>
-      </a>
+    <a class="logo" href="#">
+      <i class="logoIcon">★</i>
+      برایِت <span>استار</span>
+    </a>
 
-      <nav class="nav-links">
-        <a href="/">خانه</a>
-        <a href="/#products">خرید استارز</a>
-        <a href="/#guide">راهنمای خرید</a>
-        <a href="/#faq">سوالات متداول</a>
-      </nav>
+    <nav>
+      <a href="#buy">خرید</a>
+      <a href="#packages">بسته‌ها</a>
+      <a href="#price">قیمت</a>
+      <a href="#reviews">نظرات مشتریان</a>
+      <a href="#features">ویژگی‌ها</a>
+      <a href="#guide">راهنما</a>
+      <a href="#faq">سوالات متداول</a>
+    </nav>
 
-      <a href="/#products" class="buy-btn">
-        خرید استارز
-      </a>
+    <a class="account" href="/account.html">
+      حساب کاربری
+    </a>
 
-    </div>
-  </header>
+    <a class="cta" href="#packages">
+      خرید استارز
+    </a>
 
+    <button class="menu" onclick="showToast('از بخش‌های صفحه استفاده کنید.')">
+      ☰
+    </button>
 
-  <main>
+  </div>
+</header>
 
-    <div class="container">
+<section class="hero">
+  <div class="container heroGrid">
 
-      <div class="page-title">
-        <h1>حساب کاربری</h1>
-        <p>
-          برای مشاهده سفارش‌ها و مدیریت حساب خود وارد شوید.
-        </p>
+    <div class="heroText">
+
+      <div class="verified">
+        ✓ پلتفرم تخصصی خرید Telegram Stars
       </div>
 
+      <h1>
+        خرید استارز تلگرام با قیمت
+        <br>
+        <span>مناسب و تحویل سریع</span>
+      </h1>
 
-      <!-- Login -->
+      <p>
+        استارز تلگرام برای خرید محصولات دیجیتال، بوست کانال،
+        دونیت و فعال‌سازی امکانات تلگرام استفاده می‌شود.
+        برایِت استار خرید ریالی را با آیدی تلگرام ساده می‌کند.
+      </p>
 
-      <section id="loginSection" class="login-card">
+      <div class="actions">
+        <a class="primary" href="#buy">خرید استارز</a>
+        <a class="secondary" href="#guide">راهنمای خرید</a>
+      </div>
+
+    </div>
+
+    <div class="heroArt">
+      <div class="orb">
+        <div class="star">★</div>
+      </div>
+
+      <div class="artText">
+        BRIGHT STAR • TELEGRAM XTR
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="instant" id="buy">
+  <div class="container">
+
+    <div class="instantBox">
+
+      <div class="instantTitle">
+        <h2>⚡ خرید استارز تلگرام</h2>
+        <b>ثبت سریع سفارش</b>
+      </div>
+
+      <div class="instantRow">
+
+        <select id="quick"></select>
+
+        <div class="field" id="quickInfo">
+          اطلاعات بسته انتخاب‌شده
+        </div>
 
         <button
-          id="googleLogin"
-          class="google-btn"
-          type="button"
+          class="instantBtn"
+          onclick="openBuy(Number(quick.value))"
         >
-
-          <svg
-            class="google-icon"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <path
-              fill="#4285F4"
-              d="M21.35 12.27c0-.79-.07-1.55-.23-2.27H12v4.3h5.24a4.48 4.48 0 0 1-1.94 2.94v2.45h3.14c1.84-1.69 2.91-4.18 2.91-7.42Z"
-            />
-            <path
-              fill="#34A853"
-              d="M12 21.5c2.63 0 4.84-.87 6.45-2.36l-3.14-2.45c-.87.58-1.98.92-3.31.92-2.54 0-4.69-1.72-5.46-4.03H3.3v2.53A9.75 9.75 0 0 0 12 21.5Z"
-            />
-            <path
-              fill="#FBBC05"
-              d="M6.54 13.58A5.86 5.86 0 0 1 6.23 12c0-.55.1-1.08.31-1.58V7.89H3.3A9.49 9.49 0 0 0 2.25 12c0 1.53.37 2.97 1.05 4.11l3.24-2.53Z"
-            />
-            <path
-              fill="#EA4335"
-              d="M12 6.39c1.43 0 2.71.49 3.72 1.45l2.79-2.79C16.83 3.5 14.63 2.5 12 2.5a9.75 9.75 0 0 0-8.7 5.39l3.24 2.53C7.31 8.11 9.46 6.39 12 6.39Z"
-            />
-          </svg>
-
-          ورود با حساب Google
-
+          خرید بسته
         </button>
 
-        <div id="errorBox" class="error"></div>
+      </div>
 
-      </section>
+    </div>
 
+  </div>
+</section>
 
-      <!-- Account -->
+<section class="section" id="packages">
+  <div class="container">
 
-      <section id="accountSection" class="account">
+    <div class="heading">
+      <small>بسته‌های برایِت استار</small>
+      <h2>بسته موردنظرت را انتخاب کن</h2>
+      <p>
+        قیمت‌های فروش برایِت استار
+      </p>
+    </div>
 
-        <div class="profile-card">
+    <div class="cards" id="cards"></div>
 
-          <div class="profile">
+  </div>
+</section>
 
-            <img
-              id="avatar"
-              class="avatar"
-              src=""
-              alt="تصویر پروفایل"
-            >
+<section class="section gray" id="price">
+  <div class="container">
 
-            <div class="profile-info">
+    <div class="heading">
+      <small>قیمت</small>
+      <h2>قیمت استارز تلگرام</h2>
+      <p>قیمت‌های فروش برایِت استار</p>
+    </div>
 
-              <h2 id="userName">
-                کاربر Bright Star
-              </h2>
+    <div class="tableWrap">
 
-              <p id="userEmail"></p>
+      <table class="table">
 
-            </div>
+        <thead>
+          <tr>
+            <th>تعداد</th>
+            <th>قیمت تومان</th>
+            <th>خرید</th>
+          </tr>
+        </thead>
 
+        <tbody id="rows"></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+</section>
+
+<section class="section" id="reviews">
+  <div class="container">
+
+    <div class="heading">
+      <small>نظرات مشتریان</small>
+      <h2>مشتری‌ها چه می‌گویند؟</h2>
+    </div>
+
+    <div class="reviews">
+
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <p>قیمت مناسب و دریافت سریع.</p>
+        <small>خرید استارز</small>
+      </div>
+
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <p>فرآیند خرید خیلی ساده بود.</p>
+        <small>مشتری برایِت استار</small>
+      </div>
+
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <p>پشتیبانی پاسخ‌گو و سریع.</p>
+        <small>مشتری برایِت استار</small>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<section class="section gray" id="features">
+  <div class="container">
+
+    <div class="heading">
+      <small>چرا برایِت استار؟</small>
+      <h2>خرید با خیال راحت</h2>
+    </div>
+
+    <div class="grid4">
+
+      <div class="feature">
+        <div class="ico">🚀</div>
+        <b>تحویل سریع</b>
+        <p>پردازش سفارش پس از تأیید پرداخت.</p>
+      </div>
+
+      <div class="feature">
+        <div class="ico">🎧</div>
+        <b>پشتیبانی</b>
+        <p>ارتباط مستقیم با پشتیبانی واتساپ.</p>
+      </div>
+
+      <div class="feature">
+        <div class="ico">🔒</div>
+        <b>پرداخت امن</b>
+        <p>پرداخت کارت‌به‌کارت و بررسی توسط پشتیبانی.</p>
+      </div>
+
+      <div class="feature">
+        <div class="ico">✓</div>
+        <b>تضمین سفارش</b>
+        <p>هر سفارش دارای کد سفارش اختصاصی است.</p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<section class="section" id="guide">
+  <div class="container">
+
+    <div class="heading">
+      <small>راهنمای خرید</small>
+      <h2>خرید در چند مرحله</h2>
+    </div>
+
+    <div class="steps">
+
+      <div class="step">
+        <div class="num">۱</div>
+        <h3>انتخاب بسته</h3>
+        <p>بسته استارز موردنظر را انتخاب کنید.</p>
+      </div>
+
+      <div class="step">
+        <div class="num">۲</div>
+        <h3>وارد کردن آیدی</h3>
+        <p>فقط یوزرنیم تلگرام را وارد کنید؛ رمز لازم نیست.</p>
+      </div>
+
+      <div class="step">
+        <div class="num">۳</div>
+        <h3>واریز مبلغ</h3>
+        <p>مبلغ سفارش را به کارت اعلام‌شده واریز کنید.</p>
+      </div>
+
+      <div class="step">
+        <div class="num">۴</div>
+        <h3>تأیید سفارش</h3>
+        <p>پس از بررسی و تأیید واریز، سفارش وارد مرحله انجام می‌شود.</p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<section class="section gray" id="faq">
+  <div class="container faq">
+
+    <div class="heading">
+      <small>FAQ</small>
+      <h2>سوالات متداول</h2>
+    </div>
+
+    <details>
+      <summary>آیا رمز تلگرام لازم است؟</summary>
+      <p>
+        خیر. هیچ رمز عبور یا کد ورود تلگرام را در اختیار کسی قرار ندهید.
+      </p>
+    </details>
+
+    <details>
+      <summary>آیدی تلگرام چیست؟</summary>
+      <p>
+        نام کاربری تلگرام شماست که معمولاً با @ شروع می‌شود.
+      </p>
+    </details>
+
+    <details>
+      <summary>بعد از ثبت سفارش چه می‌شود؟</summary>
+      <p>
+        سفارش با وضعیت «در انتظار پرداخت» ثبت می‌شود.
+        پس از واریز و تأیید پرداخت توسط پشتیبانی، سفارش وارد مرحله انجام می‌شود.
+      </p>
+    </details>
+
+    <details>
+      <summary>اگر پرداخت را انجام دادم چه کار کنم؟</summary>
+      <p>
+        شماره سفارش خود را نگه دارید و رسید پرداخت را برای پشتیبانی ارسال کنید.
+      </p>
+    </details>
+
+  </div>
+</section>
+
+<section class="support" id="contact">
+  <div class="container supportRow">
+
+    <div>
+      <h2>نیاز به راهنمایی داری؟</h2>
+      <p>
+        پشتیبانی برایِت استار در واتساپ آماده پاسخگویی است.
+      </p>
+    </div>
+
+    <a
+      class="wa"
+      target="_blank"
+      href="https://wa.me/989122971546?text=سلام، برای خرید استارز راهنمایی می‌خواهم."
+    >
+      ارتباط با پشتیبانی واتساپ
+    </a>
+
+  </div>
+</section>
+
+<footer>
+
+  <div class="container footerGrid">
+
+    <div>
+      <div class="logo">
+        <i class="logoIcon">★</i>
+        برایِت <span>استار</span>
+      </div>
+
+      <p style="font-size:10px;line-height:2">
+        فروشگاه آنلاین Telegram Stars.
+      </p>
+    </div>
+
+    <div>
+      <h3>خدمات</h3>
+      <a href="#packages">خرید استارز</a>
+      <a href="#guide">راهنما</a>
+      <a href="#faq">سوالات متداول</a>
+    </div>
+
+    <div>
+      <h3>دسترسی سریع</h3>
+      <a href="#buy">خرید</a>
+      <a href="#price">قیمت</a>
+      <a href="#reviews">نظرات</a>
+    </div>
+
+    <div>
+      <h3>پشتیبانی</h3>
+      <a target="_blank" href="https://wa.me/989122971546">
+        واتساپ
+      </a>
+      <a href="#contact">09122971546</a>
+    </div>
+
+  </div>
+
+  <div class="container copy">
+    © 2026 Bright Star — تمامی حقوق محفوظ است.
+  </div>
+
+</footer>
+
+<a
+  class="float"
+  target="_blank"
+  href="https://wa.me/989122971546"
+>
+  ◉
+</a>
+
+<div class="modal" id="modal">
+
+  <div class="box">
+
+    <button class="close" onclick="closeBuy()">×</button>
+
+    <h2>ثبت سفارش</h2>
+
+    <div
+      id="selected"
+      style="
+        background:rgba(139,92,246,.12);
+        border:1px solid rgba(139,92,246,.2);
+        padding:11px;
+        border-radius:8px;
+        font-size:11px;
+      "
+    ></div>
+
+    <label>آیدی تلگرام</label>
+
+    <input
+      id="tg"
+      placeholder="username یا @username"
+      autocomplete="off"
+    >
+
+    <label>شماره موبایل</label>
+
+    <input
+      id="phone"
+      placeholder="0912xxxxxxx"
+      inputmode="tel"
+      autocomplete="tel"
+    >
+
+    <label>کد تخفیف</label>
+
+    <input
+      id="coupon"
+      placeholder="اختیاری"
+      autocomplete="off"
+    >
+
+    <button class="pay" onclick="submitOrder()">
+      ثبت سفارش و نمایش اطلاعات پرداخت
+    </button>
+
+    <p class="hint">
+      پس از ثبت سفارش، شماره کارت برای شما نمایش داده می‌شود.
+      وضعیت سفارش ابتدا «در انتظار پرداخت» خواهد بود.
+    </p>
+
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+const products = [
+  {"id":1,"stars":50,"name":"بسته پایه","price":198603},
+  {"id":2,"stars":100,"name":"بسته کوچک","price":397205},
+  {"id":3,"stars":150,"name":"بسته ۱۵۰","price":609047},
+  {"id":4,"stars":250,"name":"بسته ۲۵۰","price":993012},
+  {"id":5,"stars":350,"name":"بسته ۳۵۰","price":1403457},
+  {"id":6,"stars":500,"name":"پیشنهاد ویژه","price":1986024},
+  {"id":7,"stars":1000,"name":"بسته حرفه‌ای","price":3972047},
+  {"id":8,"stars":2500,"name":"بسته طلایی","price":9930117},
+  {"id":9,"stars":5000,"name":"بسته بزرگ","price":19860234},
+  {"id":10,"stars":10000,"name":"بسته ویژه","price":39720466},
+  {"id":11,"stars":50000,"name":"بسته ۵۰ هزار","price":198602333},
+  {"id":12,"stars":25000,"name":"بسته ۲۵ هزار","price":99301167}
+];
+
+const fa = n =>
+  new Intl.NumberFormat('fa-IR').format(n);
+
+const cards =
+  document.getElementById('cards');
+
+const rows =
+  document.getElementById('rows');
+
+const quick =
+  document.getElementById('quick');
+
+const quickInfo =
+  document.getElementById('quickInfo');
+
+let selected = null;
+
+function render(){
+
+  cards.innerHTML = products.map((p,i) => `
+
+    <article class="card">
+
+      ${
+        p.stars === 500
+        ? '<span class="badge">محبوب‌ترین</span>'
+        : ''
+      }
+
+      <div class="starIcon">★</div>
+
+      <h3>
+        ${fa(p.stars)} استارز
+      </h3>
+
+      <div class="desc">
+        ${p.name}
+      </div>
+
+      <div class="price">
+        ${fa(p.price)} تومان
+      </div>
+
+      <button
+        class="buy"
+        onclick="openBuy(${i})"
+      >
+        خرید بسته ←
+      </button>
+
+    </article>
+
+  `).join('');
+
+  rows.innerHTML = products.map((p,i) => `
+
+    <tr>
+
+      <td>
+        ${fa(p.stars)} استارز
+      </td>
+
+      <td>
+        ${fa(p.price)} تومان
+      </td>
+
+      <td>
+
+        <button onclick="openBuy(${i})">
+          🛒 خرید
+        </button>
+
+      </td>
+
+    </tr>
+
+  `).join('');
+
+  quick.innerHTML = products.map((p,i) => `
+
+    <option value="${i}">
+      ${fa(p.stars)} استارز — ${fa(p.price)} تومان
+    </option>
+
+  `).join('');
+
+  quick.onchange = () => {
+
+    const p = products[Number(quick.value)];
+
+    quickInfo.textContent =
+      `${fa(p.stars)} استارز — ${fa(p.price)} تومان`;
+
+  };
+
+  quickInfo.textContent =
+    `${fa(products[0].stars)} استارز — ${fa(products[0].price)} تومان`;
+}
+
+function openBuy(i){
+
+  selected = products[i];
+
+  document.getElementById('selected').textContent =
+    `⭐ ${fa(selected.stars)} استارز — ${fa(selected.price)} تومان`;
+
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeBuy(){
+
+  document.getElementById('modal').classList.remove('open');
+
+}
+
+function showToast(text){
+
+  const toast =
+    document.getElementById('toast');
+
+  toast.textContent = text;
+
+  toast.classList.add('show');
+
+  setTimeout(() => {
+    toast.classList.remove('show');
+  },2500);
+}
+
+async function submitOrder(){
+
+  const tg =
+    document.getElementById('tg')
+    .value
+    .trim()
+    .replace(/^@/,'');
+
+  const phone =
+    document.getElementById('phone')
+    .value
+    .trim();
+
+  const coupon =
+    document.getElementById('coupon')
+    .value
+    .trim();
+
+  if(!tg){
+
+    showToast('آیدی تلگرام را وارد کنید.');
+
+    return;
+  }
+
+  if(!phone){
+
+    showToast('شماره موبایل را وارد کنید.');
+
+    return;
+  }
+
+  if(!selected){
+
+    showToast('ابتدا یک بسته انتخاب کنید.');
+
+    return;
+  }
+
+  const button =
+    document.querySelector('.pay');
+
+  button.disabled = true;
+
+  button.textContent =
+    'در حال ثبت سفارش...';
+
+  try{
+
+    const response =
+      await fetch('/.netlify/functions/orders',{
+        method:'POST',
+
+        headers:{
+          'Content-Type':'application/json'
+        },
+
+        body:JSON.stringify({
+
+          productId:selected.id,
+
+          telegram:tg,
+
+          phone:phone,
+
+          coupon:coupon
+
+        })
+      });
+
+    const data =
+      await response.json();
+
+    if(!response.ok || !data.success){
+
+      throw new Error(
+        data.error || 'خطا در ثبت سفارش'
+      );
+    }
+
+    const order =
+      data.order;
+
+    document.getElementById('modal').innerHTML = `
+
+      <div class="box">
+
+        <button
+          class="close"
+          onclick="closeBuy()"
+        >
+          ×
+        </button>
+
+        <h2>
+          سفارش ثبت شد ✅
+        </h2>
+
+        <div class="paymentCard">
+
+          <div class="paymentCardTitle">
+            شماره سفارش
           </div>
 
+          <strong>
+            ${order.id}
+          </strong>
 
-          <h3 class="section-title">
-            سفارش‌های من
-          </h3>
+        </div>
 
-          <div id="ordersContainer">
+        <div class="paymentCard">
 
-            <div class="orders-empty">
-              هنوز سفارشی ثبت نشده است.
-              <br>
-              برای خرید استارز از بخش خرید استفاده کنید.
-            </div>
-
+          <div class="paymentCardTitle">
+            بسته انتخاب‌شده
           </div>
 
+          <strong>
+            ${fa(selected.stars)} استارز
+          </strong>
+
+          <br>
+
+          <span style="font-size:12px;color:#aaa3bb">
+            ${fa(selected.price)} تومان
+          </span>
+
+        </div>
+
+        <div class="paymentCard">
+
+          <div class="paymentCardTitle">
+            مبلغ قابل پرداخت
+          </div>
+
+          <strong>
+            ${fa(selected.price)} تومان
+          </strong>
+
+        </div>
+
+        <div class="paymentCard">
+
+          <div class="paymentCardTitle">
+            شماره کارت برای واریز
+          </div>
+
+          <strong class="cardNumber">
+            6219 8619 5349 5339
+          </strong>
 
           <button
-            id="logoutBtn"
-            class="logout"
-            type="button"
+            class="copyCardBtn"
+            onclick="copyCard()"
           >
-            خروج از حساب
+            کپی شماره کارت
           </button>
 
         </div>
 
-      </section>
+        <div class="pending">
 
-    </div>
+          وضعیت سفارش:
+          <strong>
+            در انتظار پرداخت
+          </strong>
 
-  </main>
+          <br>
 
+          پس از واریز، رسید پرداخت را برای پشتیبانی
+          ارسال کنید تا پرداخت بررسی شود.
 
-  <footer>
-    © 2026 Bright Star — تمامی حقوق محفوظ است.
-  </footer>
+        </div>
 
+        <a
+          class="wa"
+          style="
+            display:block;
+            text-align:center;
+            margin-top:12px;
+          "
+          target="_blank"
+          href="https://wa.me/989122971546?text=${encodeURIComponent(
+            `سلام، سفارش ${order.id} را ثبت کردم و مبلغ را واریز کردم.`
+          )}"
+        >
+          ارسال رسید در واتساپ
+        </a>
 
-  <script>
+        <button
+          class="doneBtn"
+          onclick="closeBuy()"
+        >
+          بستن
+        </button>
 
-    const GOOGLE_LOGIN_URL =
-      "/.netlify/functions/google-auth";
+      </div>
+    `;
 
-    const loginSection =
-      document.getElementById("loginSection");
+    document
+      .getElementById('modal')
+      .classList.add('open');
 
-    const accountSection =
-      document.getElementById("accountSection");
+  }catch(error){
 
-    const googleLogin =
-      document.getElementById("googleLogin");
+    console.error(error);
 
-    const errorBox =
-      document.getElementById("errorBox");
-
-    const userName =
-      document.getElementById("userName");
-
-    const userEmail =
-      document.getElementById("userEmail");
-
-    const avatar =
-      document.getElementById("avatar");
-
-    const ordersContainer =
-      document.getElementById("ordersContainer");
-
-    const logoutBtn =
-      document.getElementById("logoutBtn");
-
-
-    /*
-     * شروع ورود با Google
-     */
-
-    googleLogin.addEventListener("click", () => {
-
-      googleLogin.disabled = true;
-
-      googleLogin.textContent =
-        "در حال انتقال به Google...";
-
-      window.location.href =
-        GOOGLE_LOGIN_URL;
-
-    });
-
-
-    /*
-     * خواندن اطلاعاتی که Function بعد از
-     * ورود Google به account.html برگردانده
-     */
-
-    function loadGoogleUser() {
-
-      const params =
-        new URLSearchParams(
-          window.location.search
-        );
-
-      const success =
-        params.get("google_login");
-
-      if (success !== "success") {
-        return false;
-      }
-
-      const name =
-        params.get("name") || "کاربر Bright Star";
-
-      const email =
-        params.get("email") || "";
-
-      const picture =
-        params.get("picture") || "";
-
-
-      userName.textContent = name;
-
-      userEmail.textContent = email;
-
-      if (picture) {
-        avatar.src = picture;
-      } else {
-        avatar.src =
-          "https://www.gravatar.com/avatar/?d=mp";
-      }
-
-
-      loginSection.style.display = "none";
-
-      accountSection.style.display = "block";
-
-
-      /*
-       * پاک کردن پارامترهای Google از آدرس
-       * بدون Reload کردن صفحه
-       */
-
-      window.history.replaceState(
-        {},
-        document.title,
-        "/account.html"
-      );
-
-      return true;
-    }
-
-
-    /*
-     * نمایش سفارش‌های کاربر
-     *
-     * در نسخه فعلی، سفارش‌ها از API موجود
-     * Bright Star خوانده می‌شوند.
-     */
-
-    async function loadOrders(email) {
-
-      if (!email) {
-        return;
-      }
-
-      try {
-
-        const response =
-          await fetch(
-            "/api/orders"
-          );
-
-        if (!response.ok) {
-          return;
-        }
-
-        const data =
-          await response.json();
-
-        /*
-         * API فعلی سفارش‌ها را بر اساس کد سفارش
-         * برمی‌گرداند، بنابراین فعلاً لیست سفارش
-         * را دستکاری نمی‌کنیم.
-         */
-
-        if (!data) {
-          return;
-        }
-
-      } catch (error) {
-
-        console.log(
-          "Orders API unavailable."
-        );
-
-      }
-
-    }
-
-
-    /*
-     * خروج
-     */
-
-    logoutBtn.addEventListener(
-      "click",
-      () => {
-
-        sessionStorage.removeItem(
-          "bright_star_google_user"
-        );
-
-        window.location.href = "/";
-
-      }
+    showToast(
+      'ثبت سفارش انجام نشد. دوباره تلاش کنید.'
     );
 
+  }finally{
 
-    /*
-     * اجرای اولیه
-     */
+    button.disabled = false;
 
-    loadGoogleUser();
+    button.textContent =
+      'ثبت سفارش و نمایش اطلاعات پرداخت';
+  }
+}
 
-  </script>
+function copyCard(){
+
+  navigator.clipboard
+    .writeText('6219861953495339')
+    .then(() => {
+
+      showToast(
+        'شماره کارت کپی شد ✓'
+      );
+
+    })
+    .catch(() => {
+
+      showToast(
+        'کپی خودکار انجام نشد.'
+      );
+
+    });
+}
+
+document
+  .getElementById('modal')
+  .addEventListener('click',function(e){
+
+    if(e.target === this){
+      closeBuy();
+    }
+
+  });
+
+render();
+
+</script>
 
 </body>
 </html>
