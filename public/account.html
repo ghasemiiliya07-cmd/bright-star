@@ -1,1 +1,613 @@
-<!doctype html><html lang="fa" dir="rtl"><head><meta charset="utf-8"><title>حساب من - Bright Star</title><style>body{background:#07070c;color:white;font-family:tahoma}.box{max-width:500px;margin:50px auto;background:#ffffff10;padding:25px;border-radius:20px;backdrop-filter:blur(15px)}input,button{padding:12px;width:100%;margin:8px 0;border-radius:10px;border:1px solid #ffffff22;background:#ffffff10;color:white}button{background:#8b5cf6}</style></head><body><div class="box"><h2>حساب کاربری</h2><input id="p" placeholder="شماره موبایل"><input id="c" placeholder="کد ورود"><button onclick="login()">ورود</button><div id="o"></div></div><script>async function login(){let r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:p.value,code:c.value})});if(r.ok){let m=await fetch('/api/me');let d=await m.json();o.innerHTML='سفارش ها:<br>'+d.orders.map(x=>x.code+' - '+x.amount).join('<br>')}} </script></body></html>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>حساب کاربری | Bright Star</title>
+
+  <meta
+    name="description"
+    content="حساب کاربری برایت استار"
+  >
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Tahoma, Arial, sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(35, 150, 255, 0.18), transparent 35%),
+        radial-gradient(circle at bottom left, rgba(0, 91, 255, 0.12), transparent 35%),
+        #07111f;
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font-family: inherit;
+    }
+
+    .container {
+      width: min(1100px, calc(100% - 32px));
+      margin: auto;
+    }
+
+    /* Header */
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7, 17, 31, 0.82);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .nav {
+      min-height: 74px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .logo-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #2196f3, #0066ff);
+      box-shadow: 0 10px 30px rgba(0, 119, 255, 0.25);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      color: #c8d5e6;
+      font-size: 14px;
+    }
+
+    .nav-links a:hover {
+      color: #fff;
+    }
+
+    .buy-btn {
+      padding: 12px 18px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #2196f3, #0066ff);
+      font-weight: 800;
+    }
+
+    /* Main */
+
+    main {
+      padding: 60px 0 90px;
+    }
+
+    .page-title {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .page-title h1 {
+      font-size: clamp(28px, 5vw, 42px);
+      margin-bottom: 10px;
+    }
+
+    .page-title p {
+      color: #9fb0c5;
+      line-height: 1.9;
+    }
+
+    /* Login */
+
+    .login-card {
+      max-width: 520px;
+      margin: auto;
+      padding: 35px;
+      background: rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 25px 70px rgba(0,0,0,0.25);
+    }
+
+    .google-btn {
+      width: 100%;
+      min-height: 56px;
+      border: 0;
+      border-radius: 15px;
+      background: #fff;
+      color: #18212f;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      transition: transform .2s, box-shadow .2s;
+    }
+
+    .google-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+    }
+
+    .google-icon {
+      width: 22px;
+      height: 22px;
+      display: block;
+    }
+
+    .error {
+      display: none;
+      margin-top: 18px;
+      padding: 13px;
+      border-radius: 12px;
+      background: rgba(255, 70, 70, 0.12);
+      border: 1px solid rgba(255, 70, 70, 0.25);
+      color: #ff9b9b;
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    /* Account */
+
+    .account {
+      display: none;
+    }
+
+    .profile-card {
+      max-width: 850px;
+      margin: auto;
+      padding: 30px;
+      background: rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      backdrop-filter: blur(20px);
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding-bottom: 25px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 25px;
+    }
+
+    .avatar {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #15263b;
+      border: 3px solid rgba(33,150,243,0.5);
+    }
+
+    .profile-info h2 {
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+
+    .profile-info p {
+      color: #9fb0c5;
+      direction: ltr;
+      text-align: right;
+    }
+
+    .section-title {
+      font-size: 20px;
+      margin-bottom: 18px;
+    }
+
+    .orders-empty {
+      padding: 30px;
+      text-align: center;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.035);
+      color: #9fb0c5;
+      line-height: 2;
+    }
+
+    .logout {
+      margin-top: 25px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: transparent;
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .logout:hover {
+      background: rgba(255,255,255,0.06);
+    }
+
+    /* Footer */
+
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 25px 0;
+      text-align: center;
+      color: #71839a;
+      font-size: 13px;
+    }
+
+    @media (max-width: 750px) {
+      .nav-links {
+        display: none;
+      }
+
+      .nav {
+        min-height: 65px;
+      }
+
+      main {
+        padding-top: 40px;
+      }
+
+      .login-card,
+      .profile-card {
+        padding: 23px;
+      }
+
+      .profile {
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="container nav">
+
+      <a href="/" class="logo">
+        <span class="logo-icon">⭐</span>
+        <span>Bright Star</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="/">خانه</a>
+        <a href="/#products">خرید استارز</a>
+        <a href="/#guide">راهنمای خرید</a>
+        <a href="/#faq">سوالات متداول</a>
+      </nav>
+
+      <a href="/#products" class="buy-btn">
+        خرید استارز
+      </a>
+
+    </div>
+  </header>
+
+
+  <main>
+
+    <div class="container">
+
+      <div class="page-title">
+        <h1>حساب کاربری</h1>
+        <p>
+          برای مشاهده سفارش‌ها و مدیریت حساب خود وارد شوید.
+        </p>
+      </div>
+
+
+      <!-- Login -->
+
+      <section id="loginSection" class="login-card">
+
+        <button
+          id="googleLogin"
+          class="google-btn"
+          type="button"
+        >
+
+          <svg
+            class="google-icon"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              fill="#4285F4"
+              d="M21.35 12.27c0-.79-.07-1.55-.23-2.27H12v4.3h5.24a4.48 4.48 0 0 1-1.94 2.94v2.45h3.14c1.84-1.69 2.91-4.18 2.91-7.42Z"
+            />
+            <path
+              fill="#34A853"
+              d="M12 21.5c2.63 0 4.84-.87 6.45-2.36l-3.14-2.45c-.87.58-1.98.92-3.31.92-2.54 0-4.69-1.72-5.46-4.03H3.3v2.53A9.75 9.75 0 0 0 12 21.5Z"
+            />
+            <path
+              fill="#FBBC05"
+              d="M6.54 13.58A5.86 5.86 0 0 1 6.23 12c0-.55.1-1.08.31-1.58V7.89H3.3A9.49 9.49 0 0 0 2.25 12c0 1.53.37 2.97 1.05 4.11l3.24-2.53Z"
+            />
+            <path
+              fill="#EA4335"
+              d="M12 6.39c1.43 0 2.71.49 3.72 1.45l2.79-2.79C16.83 3.5 14.63 2.5 12 2.5a9.75 9.75 0 0 0-8.7 5.39l3.24 2.53C7.31 8.11 9.46 6.39 12 6.39Z"
+            />
+          </svg>
+
+          ورود با حساب Google
+
+        </button>
+
+        <div id="errorBox" class="error"></div>
+
+      </section>
+
+
+      <!-- Account -->
+
+      <section id="accountSection" class="account">
+
+        <div class="profile-card">
+
+          <div class="profile">
+
+            <img
+              id="avatar"
+              class="avatar"
+              src=""
+              alt="تصویر پروفایل"
+            >
+
+            <div class="profile-info">
+
+              <h2 id="userName">
+                کاربر Bright Star
+              </h2>
+
+              <p id="userEmail"></p>
+
+            </div>
+
+          </div>
+
+
+          <h3 class="section-title">
+            سفارش‌های من
+          </h3>
+
+          <div id="ordersContainer">
+
+            <div class="orders-empty">
+              هنوز سفارشی ثبت نشده است.
+              <br>
+              برای خرید استارز از بخش خرید استفاده کنید.
+            </div>
+
+          </div>
+
+
+          <button
+            id="logoutBtn"
+            class="logout"
+            type="button"
+          >
+            خروج از حساب
+          </button>
+
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+
+  <footer>
+    © 2026 Bright Star — تمامی حقوق محفوظ است.
+  </footer>
+
+
+  <script>
+
+    const GOOGLE_LOGIN_URL =
+      "/.netlify/functions/google-auth";
+
+    const loginSection =
+      document.getElementById("loginSection");
+
+    const accountSection =
+      document.getElementById("accountSection");
+
+    const googleLogin =
+      document.getElementById("googleLogin");
+
+    const errorBox =
+      document.getElementById("errorBox");
+
+    const userName =
+      document.getElementById("userName");
+
+    const userEmail =
+      document.getElementById("userEmail");
+
+    const avatar =
+      document.getElementById("avatar");
+
+    const ordersContainer =
+      document.getElementById("ordersContainer");
+
+    const logoutBtn =
+      document.getElementById("logoutBtn");
+
+
+    /*
+     * شروع ورود با Google
+     */
+
+    googleLogin.addEventListener("click", () => {
+
+      googleLogin.disabled = true;
+
+      googleLogin.textContent =
+        "در حال انتقال به Google...";
+
+      window.location.href =
+        GOOGLE_LOGIN_URL;
+
+    });
+
+
+    /*
+     * خواندن اطلاعاتی که Function بعد از
+     * ورود Google به account.html برگردانده
+     */
+
+    function loadGoogleUser() {
+
+      const params =
+        new URLSearchParams(
+          window.location.search
+        );
+
+      const success =
+        params.get("google_login");
+
+      if (success !== "success") {
+        return false;
+      }
+
+      const name =
+        params.get("name") || "کاربر Bright Star";
+
+      const email =
+        params.get("email") || "";
+
+      const picture =
+        params.get("picture") || "";
+
+
+      userName.textContent = name;
+
+      userEmail.textContent = email;
+
+      if (picture) {
+        avatar.src = picture;
+      } else {
+        avatar.src =
+          "https://www.gravatar.com/avatar/?d=mp";
+      }
+
+
+      loginSection.style.display = "none";
+
+      accountSection.style.display = "block";
+
+
+      /*
+       * پاک کردن پارامترهای Google از آدرس
+       * بدون Reload کردن صفحه
+       */
+
+      window.history.replaceState(
+        {},
+        document.title,
+        "/account.html"
+      );
+
+      return true;
+    }
+
+
+    /*
+     * نمایش سفارش‌های کاربر
+     *
+     * در نسخه فعلی، سفارش‌ها از API موجود
+     * Bright Star خوانده می‌شوند.
+     */
+
+    async function loadOrders(email) {
+
+      if (!email) {
+        return;
+      }
+
+      try {
+
+        const response =
+          await fetch(
+            "/api/orders"
+          );
+
+        if (!response.ok) {
+          return;
+        }
+
+        const data =
+          await response.json();
+
+        /*
+         * API فعلی سفارش‌ها را بر اساس کد سفارش
+         * برمی‌گرداند، بنابراین فعلاً لیست سفارش
+         * را دستکاری نمی‌کنیم.
+         */
+
+        if (!data) {
+          return;
+        }
+
+      } catch (error) {
+
+        console.log(
+          "Orders API unavailable."
+        );
+
+      }
+
+    }
+
+
+    /*
+     * خروج
+     */
+
+    logoutBtn.addEventListener(
+      "click",
+      () => {
+
+        sessionStorage.removeItem(
+          "bright_star_google_user"
+        );
+
+        window.location.href = "/";
+
+      }
+    );
+
+
+    /*
+     * اجرای اولیه
+     */
+
+    loadGoogleUser();
+
+  </script>
+
+</body>
+</html>
