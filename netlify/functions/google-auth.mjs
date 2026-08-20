@@ -1,200 +1,460 @@
+import crypto from "crypto";
+
+const SITE_URL = "https://brightstars.ir";
+const REDIRECT_URI =
+  "https://brightstars.ir/.netlify/functions/google-auth";
+
+const SESSION_COOKIE = "brightstar_session";
+const STATE_COOKIE = "brightstar_oauth_state";
+
+const SESSION_MAX_AGE = 7 * 24 * 60 * 60;
+const STATE_MAX_AGE = 10 * 60;
+
+function getHeader(event, name) {
+  const headers = event.headers || {};
+  const wanted = name.toLowerCase();
+
+  for (const key of Object.keys(headers)) {
+    if (key.toLowerCase() === wanted) {
+      return headers[key];
+    }
+  }
+
+  return undefined;
+}
+
+function parseCookies(event) {
+  const header = getHeader(event, "cookie");
+
+  if (!header) {
+    return {};
+  }
+
+  const result = {};
+
+  for (const item of header.split(";")) {
+    const index = item.indexOf("=");
+
+    if (index === -1) {
+      continue;
+    }
+
+    const key = item.slice(0, index).trim();
+    const value = item.slice(index + 1).trim();
+
+    try {
+      result[key] = decodeURIComponent(value);
+    } catch {
+      result[key] = value;
+    }
+  }
+
+  return result;
+}
+
+function randomToken(bytes = 32) {
+  return crypto.randomBytes(bytes).toString("hex");
+}
+
+function base64UrlEncode(text) {
+  return Buffer.from(text, "utf8")
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/g, "");
+}
+
+function base64UrlDecode(text) {
+  let value = text
+    .replace(/-/g, "+")
+    .replace(/_/g, "/");
+
+  while (value.length % 4 !== 0) {
+    value += "=";
+  }
+
+  return Buffer.from(value, "base64").toString("utf8");
+}
+
+function sign(value, secret) {
+  return crypto
+    .createHmac("sha256", secret)
+    .update(value)
+    .digest("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/g, "");
+}
+
+function createSession(user, secret) {
+  const now = Math.floor(Date.now() / 1000);
+
+  const payload = {
+    sub: user.sub,
+    email: user.email,
+    name: user.name || "",
+    picture: user.picture || "",
+    role: user.role,
+    iat: now,
+    exp: now + SESSION_MAX_AGE
+  };
+
+  const encoded = base64UrlEncode(
+    JSON.stringify(payload)
+  );
+
+  const signature = sign(encoded, secret);
+
+  return encoded + "." + signature;
+}
+
+function sessionCookie(token) {
+  return [
+    `${SESSION_COOKIE}=${encodeURIComponent(token)}`,
+    "Path=/",
+    "HttpOnly",
+    "Secure",
+    "SameSite=Lax",
+    `Max-Age=${SESSION_MAX_AGE}`
+  ].join("; ");
+}
+
+function stateCookie(state) {
+  return [
+    `${STATE_COOKIE}=${encodeURIComponent(state)}`,
+    "Path=/",
+    "HttpOnly",
+    "Secure",
+    "SameSite=Lax",
+    `Max-Age=${STATE_MAX_AGE}`
+  ].join("; ");
+}
+
+function clearStateCookie() {
+  return [
+    `${STATE_COOKIE}=`,
+    "Path=/",
+    "HttpOnly",
+    "Secure",
+    "SameSite=Lax",
+    "Max-Age=0"
+  ].join("; ");
+}
+
+function redirect(location, cookies = []) {
+  return {
+    statusCode: 302,
+
+    headers: {
+      Location: location,
+      "Cache-Control": "no-store"
+    },
+
+    multiValueHeaders: {
+      "Set-Cookie": cookies
+    },
+
+    body: ""
+  };
+}
+
 export const handler = async (event) => {
   try {
-    const clientId = process.env.GOOGLE_CLIENT_ID;
-    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    const clientId =
+      process.env.GOOGLE_CLIENT_ID;
 
-    // بررسی امن متغیرها، بدون نمایش مقدار Secret
-    console.log(
-      "GOOGLE_CLIENT_ID:",
-      clientId ? "FOUND" : "MISSING"
-    );
+    const clientSecret =
+      process.env.GOOGLE_CLIENT_SECRET;
 
-    console.log(
-      "GOOGLE_CLIENT_SECRET:",
-      clientSecret ? "FOUND" : "MISSING"
-    );
+    const adminEmail =
+      String(process.env.ADMIN_EMAIL || "")
+        .trim()
+        .toLowerCase();
 
-    // اگر متغیرها وجود نداشته باشند
-    if (!clientId || !clientSecret) {
-      return {
-        statusCode: 500,
-        headers: {
-          "Content-Type": "text/plain; charset=utf-8"
-        },
-        body:
-          "Google OAuth configuration error: GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET is missing."
-      };
+    const sessionSecret =
+      process.env.SESSION_SECRET;
+
+    if (!clientId) {
+      console.error(
+        "GOOGLE_CLIENT_ID is missing."
+      );
+
+      return redirect(
+        `${SITE_URL}/account.html?login=config_error`
+      );
     }
 
-    const siteUrl = "https://brightstars.ir";
-    const redirectUri =
-      "https://brightstars.ir/.netlify/functions/google-auth";
+    if (!clientSecret) {
+      console.error(
+        "GOOGLE_CLIENT_SECRET is missing."
+      );
 
-    const query = event.queryStringParameters || {};
-    const code = query.code;
+      return redirect(
+        `${SITE_URL}/account.html?login=config_error`
+      );
+    }
+
+    if (!adminEmail) {
+      console.error(
+        "ADMIN_EMAIL is missing."
+      );
+
+      return redirect(
+        `${SITE_URL}/account.html?login=config_error`
+      );
+    }
+
+    if (!sessionSecret) {
+      console.error(
+        "SESSION_SECRET is missing."
+      );
+
+      return redirect(
+        `${SITE_URL}/account.html?login=config_error`
+      );
+    }
+
+    const query =
+      event.queryStringParameters || {};
+
+    const code =
+      query.code;
+
+    const returnedState =
+      query.state;
+
+    const googleError =
+      query.error;
+
+    if (googleError) {
+      console.log(
+        "Google login cancelled:",
+        googleError
+      );
+
+      return redirect(
+        `${SITE_URL}/account.html?login=cancelled`,
+        [clearStateCookie()]
+      );
+    }
 
     /*
-     * مرحله ۱:
-     * کاربر وارد Google می‌شود
+     * شروع ورود با Google
      */
     if (!code) {
-      const googleAuthUrl =
-        "https://accounts.google.com/o/oauth2/v2/auth?" +
-        new URLSearchParams({
-          client_id: clientId,
-          redirect_uri: redirectUri,
-          response_type: "code",
-          scope: "openid email profile",
-          access_type: "online",
-          prompt: "select_account"
-        }).toString();
+      const state =
+        randomToken(32);
 
-      return {
-        statusCode: 302,
-        headers: {
-          Location: googleAuthUrl,
-          "Cache-Control": "no-store"
-        },
-        body: ""
-      };
+      const params =
+        new URLSearchParams();
+
+      params.set(
+        "client_id",
+        clientId
+      );
+
+      params.set(
+        "redirect_uri",
+        REDIRECT_URI
+      );
+
+      params.set(
+        "response_type",
+        "code"
+      );
+
+      params.set(
+        "scope",
+        "openid email profile"
+      );
+
+      params.set(
+        "access_type",
+        "online"
+      );
+
+      params.set(
+        "prompt",
+        "select_account"
+      );
+
+      params.set(
+        "state",
+        state
+      );
+
+      const googleUrl =
+        "https://accounts.google.com/o/oauth2/v2/auth?" +
+        params.toString();
+
+      return redirect(
+        googleUrl,
+        [stateCookie(state)]
+      );
     }
 
     /*
-     * مرحله ۲:
-     * تبدیل Authorization Code به Access Token
+     * بررسی State
      */
-    const tokenResponse = await fetch(
-      "https://oauth2.googleapis.com/token",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type":
-            "application/x-www-form-urlencoded"
-        },
-        body: new URLSearchParams({
-          code: code,
-          client_id: clientId,
-          client_secret: clientSecret,
-          redirect_uri: redirectUri,
-          grant_type: "authorization_code"
-        })
-      }
-    );
+    const cookies =
+      parseCookies(event);
 
-    const tokenData = await tokenResponse.json();
+    const savedState =
+      cookies[STATE_COOKIE];
+
+    if (
+      !savedState ||
+      !returnedState ||
+      savedState !== returnedState
+    ) {
+      console.error(
+        "OAuth state mismatch."
+      );
+
+      return redirect(
+        `${SITE_URL}/account.html?login=state_error`,
+        [clearStateCookie()]
+      );
+    }
+
+    /*
+     * گرفتن Access Token از Google
+     */
+    const tokenResponse =
+      await fetch(
+        "https://oauth2.googleapis.com/token",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/x-www-form-urlencoded"
+          },
+
+          body:
+            new URLSearchParams({
+              code: code,
+              client_id: clientId,
+              client_secret: clientSecret,
+              redirect_uri: REDIRECT_URI,
+              grant_type:
+                "authorization_code"
+            })
+        }
+      );
+
+    const tokenData =
+      await tokenResponse.json();
 
     if (
       !tokenResponse.ok ||
       !tokenData.access_token
     ) {
       console.error(
-        "Google token request failed:",
-        tokenData
+        "Google token exchange failed."
       );
 
-      return {
-        statusCode: 401,
-        headers: {
-          "Content-Type":
-            "text/plain; charset=utf-8"
-        },
-        body:
-          "Google authentication failed while requesting token."
-      };
+      return redirect(
+        `${SITE_URL}/account.html?login=token_error`,
+        [clearStateCookie()]
+      );
     }
 
     /*
-     * مرحله ۳:
-     * دریافت اطلاعات حساب Google
+     * دریافت اطلاعات کاربر از Google
      */
-    const userResponse = await fetch(
-      "https://openidconnect.googleapis.com/v1/userinfo",
-      {
-        method: "GET",
-        headers: {
-          Authorization:
-            `Bearer ${tokenData.access_token}`
+    const userResponse =
+      await fetch(
+        "https://openidconnect.googleapis.com/v1/userinfo",
+        {
+          method: "GET",
+
+          headers: {
+            Authorization:
+              `Bearer ${tokenData.access_token}`
+          }
         }
-      }
-    );
-
-    const user = await userResponse.json();
-
-    if (!userResponse.ok || !user.email) {
-      console.error(
-        "Google userinfo request failed:",
-        user
       );
 
-      return {
-        statusCode: 401,
-        headers: {
-          "Content-Type":
-            "text/plain; charset=utf-8"
-        },
-        body:
-          "Could not retrieve Google account information."
-      };
+    const user =
+      await userResponse.json();
+
+    if (
+      !userResponse.ok ||
+      !user.email ||
+      !user.sub
+    ) {
+      console.error(
+        "Google user information failed."
+      );
+
+      return redirect(
+        `${SITE_URL}/account.html?login=user_error`,
+        [clearStateCookie()]
+      );
     }
+
+    /*
+     * ایمیل واقعی Google
+     */
+    const email =
+      String(user.email)
+        .trim()
+        .toLowerCase();
+
+    /*
+     * تشخیص مدیر
+     */
+    const role =
+      email === adminEmail
+        ? "admin"
+        : "user";
 
     console.log(
-      "Google login successful:",
-      user.email
+      "Google login successful."
+    );
+
+    console.log(
+      "User role:",
+      role
     );
 
     /*
-     * مرحله ۴:
-     * انتقال کاربر به صفحه حساب Bright Star
+     * ساخت Session
      */
-    const accountUrl =
-      new URL(
-        "/account.html",
-        siteUrl
+    const session =
+      createSession(
+        {
+          sub: user.sub,
+          email: email,
+          name: user.name || "",
+          picture: user.picture || "",
+          role: role
+        },
+        sessionSecret
       );
 
-    accountUrl.searchParams.set(
-      "google_login",
-      "success"
+    /*
+     * انتقال به حساب کاربری
+     *
+     * اطلاعات حساس داخل URL قرار نمی‌گیرند.
+     */
+    return redirect(
+      `${SITE_URL}/account.html?login=success`,
+      [
+        sessionCookie(session),
+        clearStateCookie()
+      ]
     );
-
-    accountUrl.searchParams.set(
-      "name",
-      user.name || ""
-    );
-
-    accountUrl.searchParams.set(
-      "email",
-      user.email || ""
-    );
-
-    accountUrl.searchParams.set(
-      "picture",
-      user.picture || ""
-    );
-
-    return {
-      statusCode: 302,
-      headers: {
-        Location: accountUrl.toString(),
-        "Cache-Control": "no-store"
-      },
-      body: ""
-    };
 
   } catch (error) {
     console.error(
-      "Google OAuth unexpected error:",
+      "Google OAuth error:",
       error
     );
 
-    return {
-      statusCode: 500,
-      headers: {
-        "Content-Type":
-          "text/plain; charset=utf-8"
-      },
-      body:
-        "An unexpected error occurred during Google login."
-    };
+    return redirect(
+      `${SITE_URL}/account.html?login=failed`
+    );
   }
 };
