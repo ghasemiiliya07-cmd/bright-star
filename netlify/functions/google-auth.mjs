@@ -1,6 +1,8 @@
+
 import crypto from "crypto";
 
 const SITE_URL = "https://brightstars.ir";
+
 const REDIRECT_URI =
   "https://brightstars.ir/.netlify/functions/google-auth";
 
@@ -9,6 +11,12 @@ const STATE_COOKIE = "brightstar_oauth_state";
 
 const SESSION_MAX_AGE = 7 * 24 * 60 * 60;
 const STATE_MAX_AGE = 10 * 60;
+
+/*
+ * ============================
+ * Header
+ * ============================
+ */
 
 function getHeader(event, name) {
   const headers = event.headers || {};
@@ -22,6 +30,12 @@ function getHeader(event, name) {
 
   return undefined;
 }
+
+/*
+ * ============================
+ * Cookies
+ * ============================
+ */
 
 function parseCookies(event) {
   const header = getHeader(event, "cookie");
@@ -52,9 +66,23 @@ function parseCookies(event) {
   return result;
 }
 
+/*
+ * ============================
+ * Random Token
+ * ============================
+ */
+
 function randomToken(bytes = 32) {
-  return crypto.randomBytes(bytes).toString("hex");
+  return crypto
+    .randomBytes(bytes)
+    .toString("hex");
 }
+
+/*
+ * ============================
+ * Base64 URL
+ * ============================
+ */
 
 function base64UrlEncode(text) {
   return Buffer.from(text, "utf8")
@@ -64,17 +92,11 @@ function base64UrlEncode(text) {
     .replace(/=+$/g, "");
 }
 
-function base64UrlDecode(text) {
-  let value = text
-    .replace(/-/g, "+")
-    .replace(/_/g, "/");
-
-  while (value.length % 4 !== 0) {
-    value += "=";
-  }
-
-  return Buffer.from(value, "base64").toString("utf8");
-}
+/*
+ * ============================
+ * HMAC Signature
+ * ============================
+ */
 
 function sign(value, secret) {
   return crypto
@@ -86,27 +108,45 @@ function sign(value, secret) {
     .replace(/=+$/g, "");
 }
 
+/*
+ * ============================
+ * ساخت Session
+ * ============================
+ */
+
 function createSession(user, secret) {
-  const now = Math.floor(Date.now() / 1000);
+  const now =
+    Math.floor(Date.now() / 1000);
 
   const payload = {
     sub: user.sub,
     email: user.email,
     name: user.name || "",
     picture: user.picture || "",
-    role: user.role,
+    role: user.role || "user",
     iat: now,
     exp: now + SESSION_MAX_AGE
   };
 
-  const encoded = base64UrlEncode(
-    JSON.stringify(payload)
-  );
+  const encoded =
+    base64UrlEncode(
+      JSON.stringify(payload)
+    );
 
-  const signature = sign(encoded, secret);
+  const signature =
+    sign(
+      encoded,
+      secret
+    );
 
-  return encoded + "." + signature;
+  return `${encoded}.${signature}`;
 }
+
+/*
+ * ============================
+ * Session Cookie
+ * ============================
+ */
 
 function sessionCookie(token) {
   return [
@@ -119,6 +159,12 @@ function sessionCookie(token) {
   ].join("; ");
 }
 
+/*
+ * ============================
+ * OAuth State Cookie
+ * ============================
+ */
+
 function stateCookie(state) {
   return [
     `${STATE_COOKIE}=${encodeURIComponent(state)}`,
@@ -129,6 +175,12 @@ function stateCookie(state) {
     `Max-Age=${STATE_MAX_AGE}`
   ].join("; ");
 }
+
+/*
+ * ============================
+ * پاک کردن State Cookie
+ * ============================
+ */
 
 function clearStateCookie() {
   return [
@@ -141,7 +193,16 @@ function clearStateCookie() {
   ].join("; ");
 }
 
-function redirect(location, cookies = []) {
+/*
+ * ============================
+ * Redirect
+ * ============================
+ */
+
+function redirect(
+  location,
+  cookies = []
+) {
   return {
     statusCode: 302,
 
@@ -158,303 +219,399 @@ function redirect(location, cookies = []) {
   };
 }
 
-export const handler = async (event) => {
-  try {
-    const clientId =
-      process.env.GOOGLE_CLIENT_ID;
+/*
+ * ============================
+ * Handler
+ * ============================
+ */
 
-    const clientSecret =
-      process.env.GOOGLE_CLIENT_SECRET;
+export const handler =
+  async (event) => {
 
-    const adminEmail =
-      String(process.env.ADMIN_EMAIL || "")
-        .trim()
-        .toLowerCase();
+    try {
 
-    const sessionSecret =
-      process.env.SESSION_SECRET;
+      /*
+       * ============================
+       * Environment Variables
+       * ============================
+       */
 
-    if (!clientId) {
-      console.error(
-        "GOOGLE_CLIENT_ID is missing."
-      );
+      const clientId =
+        process.env.GOOGLE_CLIENT_ID;
 
-      return redirect(
-        `${SITE_URL}/account.html?login=config_error`
-      );
-    }
+      const clientSecret =
+        process.env.GOOGLE_CLIENT_SECRET;
 
-    if (!clientSecret) {
-      console.error(
-        "GOOGLE_CLIENT_SECRET is missing."
-      );
+      const adminEmail =
+        String(
+          process.env.ADMIN_EMAIL || ""
+        )
+          .trim()
+          .toLowerCase();
 
-      return redirect(
-        `${SITE_URL}/account.html?login=config_error`
-      );
-    }
+      const sessionSecret =
+        process.env.SESSION_SECRET;
 
-    if (!adminEmail) {
-      console.error(
-        "ADMIN_EMAIL is missing."
-      );
+      /*
+       * ============================
+       * بررسی تنظیمات
+       * ============================
+       */
 
-      return redirect(
-        `${SITE_URL}/account.html?login=config_error`
-      );
-    }
+      if (!clientId) {
 
-    if (!sessionSecret) {
-      console.error(
-        "SESSION_SECRET is missing."
-      );
+        console.error(
+          "GOOGLE_CLIENT_ID is missing."
+        );
 
-      return redirect(
-        `${SITE_URL}/account.html?login=config_error`
-      );
-    }
+        return redirect(
+          `${SITE_URL}/account.html?login=config_error`
+        );
+      }
 
-    const query =
-      event.queryStringParameters || {};
+      if (!clientSecret) {
 
-    const code =
-      query.code;
+        console.error(
+          "GOOGLE_CLIENT_SECRET is missing."
+        );
 
-    const returnedState =
-      query.state;
+        return redirect(
+          `${SITE_URL}/account.html?login=config_error`
+        );
+      }
 
-    const googleError =
-      query.error;
+      if (!adminEmail) {
 
-    if (googleError) {
-      console.log(
-        "Google login cancelled:",
-        googleError
-      );
+        console.error(
+          "ADMIN_EMAIL is missing."
+        );
 
-      return redirect(
-        `${SITE_URL}/account.html?login=cancelled`,
-        [clearStateCookie()]
-      );
-    }
+        return redirect(
+          `${SITE_URL}/account.html?login=config_error`
+        );
+      }
 
-    /*
-     * شروع ورود با Google
-     */
-    if (!code) {
-      const state =
-        randomToken(32);
+      if (!sessionSecret) {
 
-      const params =
-        new URLSearchParams();
+        console.error(
+          "SESSION_SECRET is missing."
+        );
 
-      params.set(
-        "client_id",
-        clientId
-      );
+        return redirect(
+          `${SITE_URL}/account.html?login=config_error`
+        );
+      }
 
-      params.set(
-        "redirect_uri",
-        REDIRECT_URI
-      );
+      /*
+       * ============================
+       * Query Parameters
+       * ============================
+       */
 
-      params.set(
-        "response_type",
-        "code"
-      );
+      const query =
+        event.queryStringParameters || {};
 
-      params.set(
-        "scope",
-        "openid email profile"
-      );
+      const code =
+        query.code;
 
-      params.set(
-        "access_type",
-        "online"
-      );
+      const returnedState =
+        query.state;
 
-      params.set(
-        "prompt",
-        "select_account"
-      );
+      const googleError =
+        query.error;
 
-      params.set(
-        "state",
-        state
-      );
+      /*
+       * ============================
+       * لغو ورود توسط کاربر
+       * ============================
+       */
 
-      const googleUrl =
-        "https://accounts.google.com/o/oauth2/v2/auth?" +
-        params.toString();
+      if (googleError) {
 
-      return redirect(
-        googleUrl,
-        [stateCookie(state)]
-      );
-    }
+        console.log(
+          "Google login cancelled:",
+          googleError
+        );
 
-    /*
-     * بررسی State
-     */
-    const cookies =
-      parseCookies(event);
+        return redirect(
+          `${SITE_URL}/account.html?login=cancelled`,
+          [
+            clearStateCookie()
+          ]
+        );
+      }
 
-    const savedState =
-      cookies[STATE_COOKIE];
+      /*
+       * ============================
+       * شروع ورود با Google
+       * ============================
+       */
 
-    if (
-      !savedState ||
-      !returnedState ||
-      savedState !== returnedState
-    ) {
-      console.error(
-        "OAuth state mismatch."
-      );
+      if (!code) {
 
-      return redirect(
-        `${SITE_URL}/account.html?login=state_error`,
-        [clearStateCookie()]
-      );
-    }
+        const state =
+          randomToken(32);
 
-    /*
-     * گرفتن Access Token از Google
-     */
-    const tokenResponse =
-      await fetch(
-        "https://oauth2.googleapis.com/token",
-        {
-          method: "POST",
+        const params =
+          new URLSearchParams();
 
-          headers: {
-            "Content-Type":
-              "application/x-www-form-urlencoded"
-          },
+        params.set(
+          "client_id",
+          clientId
+        );
 
-          body:
-            new URLSearchParams({
-              code: code,
-              client_id: clientId,
-              client_secret: clientSecret,
-              redirect_uri: REDIRECT_URI,
-              grant_type:
-                "authorization_code"
-            })
-        }
-      );
+        params.set(
+          "redirect_uri",
+          REDIRECT_URI
+        );
 
-    const tokenData =
-      await tokenResponse.json();
+        params.set(
+          "response_type",
+          "code"
+        );
 
-    if (
-      !tokenResponse.ok ||
-      !tokenData.access_token
-    ) {
-      console.error(
-        "Google token exchange failed."
-      );
+        params.set(
+          "scope",
+          "openid email profile"
+        );
 
-      return redirect(
-        `${SITE_URL}/account.html?login=token_error`,
-        [clearStateCookie()]
-      );
-    }
+        params.set(
+          "access_type",
+          "online"
+        );
 
-    /*
-     * دریافت اطلاعات کاربر از Google
-     */
-    const userResponse =
-      await fetch(
-        "https://openidconnect.googleapis.com/v1/userinfo",
-        {
-          method: "GET",
+        params.set(
+          "prompt",
+          "select_account"
+        );
 
-          headers: {
-            Authorization:
-              `Bearer ${tokenData.access_token}`
+        params.set(
+          "state",
+          state
+        );
+
+        const googleUrl =
+          "https://accounts.google.com/o/oauth2/v2/auth?" +
+          params.toString();
+
+        return redirect(
+          googleUrl,
+          [
+            stateCookie(state)
+          ]
+        );
+      }
+
+      /*
+       * ============================
+       * بررسی State
+       * ============================
+       */
+
+      const cookies =
+        parseCookies(event);
+
+      const savedState =
+        cookies[STATE_COOKIE];
+
+      if (
+        !savedState ||
+        !returnedState ||
+        savedState !== returnedState
+      ) {
+
+        console.error(
+          "OAuth state mismatch."
+        );
+
+        return redirect(
+          `${SITE_URL}/account.html?login=state_error`,
+          [
+            clearStateCookie()
+          ]
+        );
+      }
+
+      /*
+       * ============================
+       * دریافت Access Token
+       * ============================
+       */
+
+      const tokenResponse =
+        await fetch(
+          "https://oauth2.googleapis.com/token",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/x-www-form-urlencoded"
+            },
+
+            body:
+              new URLSearchParams({
+                code: code,
+                client_id: clientId,
+                client_secret:
+                  clientSecret,
+                redirect_uri:
+                  REDIRECT_URI,
+                grant_type:
+                  "authorization_code"
+              })
           }
-        }
+        );
+
+      const tokenData =
+        await tokenResponse.json();
+
+      if (
+        !tokenResponse.ok ||
+        !tokenData.access_token
+      ) {
+
+        console.error(
+          "Google token exchange failed.",
+          tokenData
+        );
+
+        return redirect(
+          `${SITE_URL}/account.html?login=token_error`,
+          [
+            clearStateCookie()
+          ]
+        );
+      }
+
+      /*
+       * ============================
+       * دریافت اطلاعات کاربر
+       * ============================
+       */
+
+      const userResponse =
+        await fetch(
+          "https://openidconnect.googleapis.com/v1/userinfo",
+          {
+            method: "GET",
+
+            headers: {
+              Authorization:
+                `Bearer ${tokenData.access_token}`
+            }
+          }
+        );
+
+      const user =
+        await userResponse.json();
+
+      if (
+        !userResponse.ok ||
+        !user.email ||
+        !user.sub
+      ) {
+
+        console.error(
+          "Google user information failed.",
+          user
+        );
+
+        return redirect(
+          `${SITE_URL}/account.html?login=user_error`,
+          [
+            clearStateCookie()
+          ]
+        );
+      }
+
+      /*
+       * ============================
+       * Email
+       * ============================
+       */
+
+      const email =
+        String(user.email)
+          .trim()
+          .toLowerCase();
+
+      /*
+       * ============================
+       * تشخیص نقش کاربر
+       * ============================
+       */
+
+      const role =
+        email === adminEmail
+          ? "admin"
+          : "user";
+
+      console.log(
+        "Google login successful."
       );
 
-    const user =
-      await userResponse.json();
+      console.log(
+        "Logged in email:",
+        email
+      );
 
-    if (
-      !userResponse.ok ||
-      !user.email ||
-      !user.sub
-    ) {
+      console.log(
+        "User role:",
+        role
+      );
+
+      /*
+       * ============================
+       * ساخت Session
+       * ============================
+       */
+
+      const session =
+        createSession(
+          {
+            sub:
+              user.sub,
+
+            email:
+              email,
+
+            name:
+              user.name || "",
+
+            picture:
+              user.picture || "",
+
+            role:
+              role
+          },
+          sessionSecret
+        );
+
+      /*
+       * ============================
+       * ورود موفق
+       * ============================
+       */
+
+      return redirect(
+        `${SITE_URL}/account.html?login=success`,
+        [
+          sessionCookie(session),
+          clearStateCookie()
+        ]
+      );
+
+    } catch (error) {
+
       console.error(
-        "Google user information failed."
+        "Google OAuth error:",
+        error
       );
 
       return redirect(
-        `${SITE_URL}/account.html?login=user_error`,
-        [clearStateCookie()]
+        `${SITE_URL}/account.html?login=failed`
       );
     }
+  };
 
-    /*
-     * ایمیل واقعی Google
-     */
-    const email =
-      String(user.email)
-        .trim()
-        .toLowerCase();
-
-    /*
-     * تشخیص مدیر
-     */
-    const role =
-      email === adminEmail
-        ? "admin"
-        : "user";
-
-    console.log(
-      "Google login successful."
-    );
-
-    console.log(
-      "User role:",
-      role
-    );
-
-    /*
-     * ساخت Session
-     */
-    const session =
-      createSession(
-        {
-          sub: user.sub,
-          email: email,
-          name: user.name || "",
-          picture: user.picture || "",
-          role: role
-        },
-        sessionSecret
-      );
-
-    /*
-     * انتقال به حساب کاربری
-     *
-     * اطلاعات حساس داخل URL قرار نمی‌گیرند.
-     */
-    return redirect(
-      `${SITE_URL}/account.html?login=success`,
-      [
-        sessionCookie(session),
-        clearStateCookie()
-      ]
-    );
-
-  } catch (error) {
-    console.error(
-      "Google OAuth error:",
-      error
-    );
-
-    return redirect(
-      `${SITE_URL}/account.html?login=failed`
-    );
-  }
-};
